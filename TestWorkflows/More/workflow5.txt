@@ -1,0 +1,7 @@
+Workflow #5 - Committing to GIT
+
+1. Commit something
+
+2. Commit again
+
+Tags: GIT, commit, workflow, Fashion

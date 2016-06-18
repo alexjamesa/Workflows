@@ -1,0 +1,7 @@
+Workflow #6 - Committing to GIT
+
+1. Commit something
+
+2. aoesthu
+
+Tags: GIT, commit, workflow, Fashion

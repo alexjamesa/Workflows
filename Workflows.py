@@ -6,7 +6,7 @@ from Workflow import Workflow
 from Analyzer import Analyzer
 from KeywordSet import KeywordSet
 
-workflow_dir = "/TestWorkflows"
+workflow_dir = "TestWorkflows"
 
 def main():	
 	# Find matching workflows
