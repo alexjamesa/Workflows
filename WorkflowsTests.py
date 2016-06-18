@@ -18,5 +18,14 @@ class SeekerTests(unittest.TestCase):
     				"TestWorkflows/More/Even more/workflow6.txt" : "Workflow #6 - Committing to GIT\n\n1. Commit something\n\n2. aoesthu\n\nTags: GIT, commit, workflow, Fashion"}
         self.assertEqual(actual, expected)
 
+
+    def test_that_it_returns_nothing_for_unknown_directory( self ):
+    	test_directory = "TestWorkflowsMore"
+
+    	actual = Seeker.file_strings( test_directory )
+        
+    	expected = {}
+        self.assertEqual(actual, expected)
+
 if __name__ == '__main__':
     unittest.main()
