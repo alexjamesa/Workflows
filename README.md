@@ -30,3 +30,10 @@ Note: All directories within *TestWorkflows* will be searched in both cases.
 * -t: tag keywords
 * -w: wild keywords *(i.e., can appear anywhere)*
 * -s: smart keywords *(can be anywhere, but matches in the name are weighted highest and matches in the body are weighted lowest)*
+
+### Notes
+Consider adding the following line to your `.bash_profile` file (Mac) for easy access to *Workflows*:
+
+	alias wf="python ~/'path to/Workflows.py' ~/'where you/keep your/Workflows'"
+
+Then using *Workflows* is as simple as this: `wf -n git commit`
