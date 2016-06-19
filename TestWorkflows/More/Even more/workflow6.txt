@@ -1,7 +1,7 @@
-Workflow #6 - Committing to GIT
+#6 - Committing to GIT variant
 
 1. Commit something
 
-2. aoesthu
+2. aoesthu, land before time
 
 Tags: GIT, commit, workflow, Fashion

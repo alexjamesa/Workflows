@@ -18,6 +18,13 @@ class Workflow:
 			return False
 
 	@staticmethod
+	def workflows_for_filestrings( file_strings ):
+		workflows = []
+		for filename, file_string in file_strings.items():
+			workflows.append( Workflow(filename, file_string) )
+		return workflows
+
+	@staticmethod
 	def _name_for_content( content ):
 		return content.strip("\n").split("\n")[0].strip()
 

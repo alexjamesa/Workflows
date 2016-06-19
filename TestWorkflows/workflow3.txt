@@ -1,4 +1,4 @@
-Workflow #3 - More workflows re: computers
+Workflow #3 - More workflows re: computers variant
 154323
 
 1. Buy computer
@@ -7,4 +7,4 @@ Workflow #3 - More workflows re: computers
 
 3. Linux
 
-Tags: Ubuntu, horse, cabbage, peacock
+Tags: Ubuntu, horse, cabbage, peacock, git

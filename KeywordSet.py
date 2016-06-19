@@ -21,6 +21,10 @@ class KeywordSet:
 		else:
 			return False
 
+	def is_valid( self ):
+		total_keywords = len(self.name + self.body + self.tags + self.wild + self.smart)
+		return total_keywords > 0
+
 	@staticmethod
 	def _arguments_for_option( args,option ): # This could be more tidy
 		these_args = []

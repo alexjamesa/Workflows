@@ -1,16 +1,12 @@
 #!/usr/bin/env python
 
 class Analyzer:
-	def __init__( self, workflows ):
-		self._workflows = workflows;
 
-	def __repr__(self):
-		return 'Analyzer: %d workflows' % len(self._workflows);
-
-	def workflows_for_keywords( self,keyword_set ):
+	@staticmethod
+	def workflows_for_keywords( keyword_set,workflows ):
 		matches = []
 		scores = []
-		for workflow in self._workflows:
+		for workflow in workflows:
 			score = Analyzer._score( workflow,keyword_set )
 			if score > 0:
 				matches.append(workflow)

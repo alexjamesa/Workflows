@@ -6,40 +6,42 @@ from Workflow import Workflow
 from Analyzer import Analyzer
 from KeywordSet import KeywordSet
 
-workflow_dir = "TestWorkflows"
-
 def main():	
-	
-	# Find matching workflows
-	workflows = find_workflows()
-	keyword_set = KeywordSet( sys.argv[1:] )
-	matches = find_matches( workflows, keyword_set )
+	# Process inputs
+	workflow_dir, keywords = parse_inputs(sys.argv[1:])
+	matches = find_matches(workflow_dir, keywords)
 
 	# Print menu for user
-	print('\n\nKEYWORDS:')
-	print(keyword_set)
 	print_menu( matches )
 	selected_workflow = prompt_for_workflow( matches )
 
-	# Display chosen workflow
-	print('\n\n-------------------')
+	# Display selected workflow
+	print('\n\nWORKFLOW:\n-------------------')
 	print( selected_workflow.as_string() )
 	print('-------------------\n\n')
 
-def find_workflows():
-	file_strings = Seeker.file_strings(workflow_dir)
-	workflows = []
-	for filename, file_string in file_strings.items():
-		workflows.append(Workflow(filename, file_string))
-	return workflows
+def parse_inputs( argv ):
+	if len(argv) < 2:
+		print("   > At least two inputs required")
+		sys.exit()
+	elif len(argv) == 2:
+		workflow_dir = ""
+	else:
+		workflow_dir = argv[0]
+	keywords = argv[1:]
+	return workflow_dir, keywords
 
-def find_matches( workflows, keyword_set ):
-	analyzer = Analyzer(workflows)
-	matches = analyzer.workflows_for_keywords(keyword_set)
-	return matches
+def find_matches( workflow_dir,keywords ):
+	workflows = Workflow.workflows_for_filestrings( Seeker.file_strings( workflow_dir ) )
+	keyword_set = KeywordSet( keywords )
+	if keyword_set.is_valid() == False:
+		print("   > Invalid keywords")
+		sys.exit()
+	return Analyzer.workflows_for_keywords( keyword_set,workflows )
 
 def print_menu( workflows ):
 	workflow_count = len(workflows)
+	print("\n")
 	if workflow_count == 0:
 		print('No workflows found!\n')
 		sys.exit()

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import unittest
-from Workflows import Seeker, Workflow, KeywordSet, Analyzer
+from Workflows import Seeker, Workflow, KeywordSet, Analyzer, parse_inputs, find_matches
 
 class SeekerTests( unittest.TestCase ):
  
@@ -15,7 +15,7 @@ class SeekerTests( unittest.TestCase ):
         
     	expected = {"TestWorkflows/More/workflow4.txt" : "Workflow #4 - Committing to GIT\n\n1. Commit something\n\n2. ??\n\nTags: GIT, commit, workflow, Fashion",
     				"TestWorkflows/More/workflow5.txt" : "Workflow #5 - Committing to GIT\n\n1. Commit something\n\n2. Commit again\n\nTags: GIT, commit, workflow, Fashion",
-    				"TestWorkflows/More/Even more/workflow6.txt" : "Workflow #6 - Committing to GIT\n\n1. Commit something\n\n2. aoesthu\n\nTags: GIT, commit, workflow, Fashion"}
+    				"TestWorkflows/More/Even more/workflow6.txt" : "#6 - Committing to GIT variant\n\n1. Commit something\n\n2. aoesthu, land before time\n\nTags: GIT, commit, workflow, Fashion"}
         self.assertEqual(actual, expected)
 
 
@@ -69,6 +69,20 @@ class WorkflowTests( unittest.TestCase ):
 		expected = TestWorkflow( "testpath.txt","Title","Some content\nMore content","workflow, cat, horse" )
 		self.assertEqual(actual, expected)
 
+	def test_that_it_returns_workflow_set( self ):
+		test_filename1 = "testpath1.txt"
+		test_content1 = "Title1\nSome content1\nTags: 1" 
+		test_filename2 = "testpath2.txt"
+		test_content2 = "Title2\nSome content2\nTags: 2" 
+		file_strings = { test_filename1 : test_content1 , test_filename2 : test_content2 }
+
+		actual = Workflow.workflows_for_filestrings( file_strings )
+
+		expected = [TestWorkflow( "testpath2.txt", "Title2", "Some content2", "2"),
+					TestWorkflow( "testpath1.txt", "Title1", "Some content1", "1")]
+		self.assertEqual(actual,expected)
+
+
 
 class TestKeywordSet(KeywordSet):
 	def __init__( self,name,body,tags,wild,smart ):
@@ -118,6 +132,14 @@ class KeywordSetTests( unittest.TestCase ):
 		expected = TestKeywordSet( ["git","commit"], ["blerv"], [], [], ["pineapple","moose","mouse"])
 		self.assertEqual(actual,expected)
 
+	def test_that_it_returns_valid_for_good_keywords( self ):
+		keyword_set = KeywordSet( "-b blerv -w -s pineapple moose mouse -n git commit".split() )
+		self.assertEqual(keyword_set.is_valid(), True)
+
+	def test_that_it_returns_invalid_for_bad_keywords( self ):
+		keyword_set = KeywordSet( "aoeu -b -w -s -n -t".split() )
+		self.assertEqual(keyword_set.is_valid(), False)
+
 
 class AnalyzerTests( unittest.TestCase ):
 	def setUp( self ):
@@ -133,52 +155,83 @@ class AnalyzerTests( unittest.TestCase ):
 			"A new project in iTunes Connect",\
 			"1. Open your web browser\n2. Go to itunesconnect.?\n3. Start a project",\
 			"workflow, safari, itunes, connect" )
-		test_workflows = [self.test_xcodetrouble, self.test_xcodesetup, self.test_itunesconnect]
-		self.analyzer = Analyzer( test_workflows )
+		self.test_workflows = [self.test_xcodetrouble, self.test_xcodesetup, self.test_itunesconnect]
+		
 
 	def test_that_it_returns_workflows_for_name_only_keywords( self ):
 		keyword_set = TestKeywordSet( ["troubleshoot"], [], [], [], [])
-		workflows = self.analyzer.workflows_for_keywords( keyword_set )
+		workflows = Analyzer.workflows_for_keywords( keyword_set,self.test_workflows )
 		self.assertEqual(len(workflows),1)
 		self.assertEqual(workflows,[self.test_xcodetrouble])
 
 	def test_that_it_returns_workflows_for_body_only_keywords( self ):
 		keyword_set = TestKeywordSet( [], ["xcode"], [], [], [])
-		workflows = self.analyzer.workflows_for_keywords( keyword_set )
+		workflows = Analyzer.workflows_for_keywords( keyword_set,self.test_workflows )
 		self.assertEqual(len(workflows),1)
 		self.assertEqual(workflows,[self.test_xcodesetup])
 
 	def test_that_it_returns_workflows_for_tags_only_keywords( self ):
 		keyword_set = TestKeywordSet( [], [], ["xcode"], [], [])
-		workflows = self.analyzer.workflows_for_keywords( keyword_set )
+		workflows = Analyzer.workflows_for_keywords( keyword_set,self.test_workflows )
 		self.assertEqual(len(workflows),2)
 		self.assertEqual(workflows,[self.test_xcodesetup,self.test_xcodetrouble])
 
 	def test_that_it_returns_workflows_for_wild_only_keywords( self ):
 		keyword_set = TestKeywordSet( [], [], [], ["xcode","project"], [])
-		workflows = self.analyzer.workflows_for_keywords( keyword_set )
+		workflows = Analyzer.workflows_for_keywords( keyword_set,self.test_workflows )
 		self.assertEqual(len(workflows),1)
 		self.assertEqual(workflows,[self.test_xcodesetup])
 
 	def test_that_it_returns_workflows_for_smart_only_keywords( self ):
 		keyword_set = TestKeywordSet( [], [], [], [], ["project"])
-		workflows = self.analyzer.workflows_for_keywords( keyword_set )
+		workflows = Analyzer.workflows_for_keywords( keyword_set,self.test_workflows )
 		self.assertEqual(len(workflows),2)
 		self.assertEqual(workflows,[self.test_xcodesetup, self.test_itunesconnect])
 
 	def test_that_it_returns_workflows_for_mixed_keywords( self ):
 		keyword_set = TestKeywordSet( ["xcode"], [], ["project","workflow"], [], [])
-		workflows = self.analyzer.workflows_for_keywords( keyword_set )
+		workflows = Analyzer.workflows_for_keywords( keyword_set,self.test_workflows )
 		self.assertEqual(len(workflows),1)
 		self.assertEqual(workflows,[self.test_xcodesetup])
 
 	def test_that_it_returns_workflows_for_mixed_keywords_variant( self ):
 		keyword_set = TestKeywordSet( ["project"], ["1."], [], ["open"], ["project"])
-		workflows = self.analyzer.workflows_for_keywords( keyword_set )
+		workflows = Analyzer.workflows_for_keywords( keyword_set,self.test_workflows )
 		self.assertEqual(len(workflows),2)
 		self.assertEqual(workflows,[self.test_xcodesetup, self.test_itunesconnect])
 
-	# NT: Integration tests, error cases for inputs (like if no options, or just options)
+	
+class IntegrationTests( unittest.TestCase ):
+	def setUp( self ):
+		pass
+
+	def test_that_it_returns_single_workflow_for_mixed_keywords( self ):
+		argv = "Workflows TestWorkflows -n workflow -b land before time".split()
+		workflow_dir, keywords = parse_inputs(argv[1:])
+		actual = find_matches(workflow_dir, keywords)
+
+		expected = [TestWorkflow( "TestWorkflows/workflow3.txt", \
+			"Workflow #3 - More workflows re: computers variant", \
+			"154323\n\n1. Buy computer\n\n2. Land before time\n\n3. Linux",
+			"ubuntu, horse, cabbage, peacock, git" )]
+		self.assertEqual(actual,expected)
+
+	def test_that_it_returns_multiple_workflows_for_mixed_keywords( self ):
+		argv = "Workflows TestWorkflows -n variant -b land before time -t git".split()
+		workflow_dir, keywords = parse_inputs(argv[1:])
+		actual = find_matches(workflow_dir, keywords)
+
+		expected = [TestWorkflow( "TestWorkflows/More/Even more/workflow6.txt", \
+				"#6 - Committing to GIT variant", \
+				"1. Commit something\n\n2. aoesthu, land before time", \
+				"git, commit, workflow, fashion" ), \
+		TestWorkflow( "TestWorkflows/workflow3.txt", \
+			"Workflow #3 - More workflows re: computers variant", \
+			"154323\n\n1. Buy computer\n\n2. Land before time\n\n3. Linux",
+			"ubuntu, horse, cabbage, peacock, git" )]
+		self.assertEqual(len(actual),len(expected))
+		self.assertEqual(actual[1],expected[1])
+
 
 if __name__ == '__main__':
     unittest.main()
