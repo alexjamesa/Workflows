@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
 class KeywordSet:
-	def __init__( self,keyword_string ):
-		self.name = KeywordSet._arguments_for_option( keyword_string,'--n' )
-		self.body = KeywordSet._arguments_for_option( keyword_string,'--b' )
-		self.tags = KeywordSet._arguments_for_option( keyword_string,'--t' )
-		self.wild = KeywordSet._arguments_for_option( keyword_string,'--w' )
-		self.smart = KeywordSet._arguments_for_option( keyword_string,'--s' )
+	def __init__( self,keyword_args ):
+		self.name = KeywordSet._arguments_for_option( keyword_args,'-n' )
+		self.body = KeywordSet._arguments_for_option( keyword_args,'-b' )
+		self.tags = KeywordSet._arguments_for_option( keyword_args,'-t' )
+		self.wild = KeywordSet._arguments_for_option( keyword_args,'-w' )
+		self.smart = KeywordSet._arguments_for_option( keyword_args,'-s' )
 
 	def __repr__( self ):
 		return ('> name:  ' + ', '.join( self.name ) + '\n' if len(self.name) > 0 else "") +\
@@ -22,15 +22,14 @@ class KeywordSet:
 			return False
 
 	@staticmethod
-	def _arguments_for_option( arg_string,option ): # This could be more tidy
-		i_option = arg_string.find(option)
-		if i_option < 0:
-			return []
-		i_start = i_option + len(option)
-
-		i_next_option = arg_string[i_start:].find(' -')
-		i_end = i_next_option + i_start if i_next_option >= 0 else len(arg_string)
-		if i_start >= i_end:
-			return []
-
-		return arg_string[i_start:i_end].strip().replace(","," ").split(" ")
+	def _arguments_for_option( args,option ): # This could be more tidy
+		these_args = []
+		in_arg = False 
+		for arg in args:
+			if arg == option:
+				in_arg = True
+			elif in_arg == True:
+				if arg.startswith("-"):
+					break
+				these_args.append(arg)
+		return these_args

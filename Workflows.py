@@ -12,7 +12,7 @@ def main():
 	
 	# Find matching workflows
 	workflows = find_workflows()
-	keyword_set = KeywordSet( " ".join(sys.argv[1:]) )
+	keyword_set = KeywordSet( sys.argv[1:] )
 	matches = find_matches( workflows, keyword_set )
 
 	# Print menu for user

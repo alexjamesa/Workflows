@@ -84,37 +84,37 @@ class KeywordSetTests( unittest.TestCase ):
 		pass
 
 	def test_that_it_yields_multiple_name_keywords( self ):
-		actual = KeywordSet( "--n git commit" )
+		actual = KeywordSet( ["-n","git","commit"] )
 		expected = TestKeywordSet( ["git","commit"], [], [], [], [])
 		self.assertEqual(actual,expected)
 
 	def test_that_it_yields_multiple_body_keywords( self ):
-		actual = KeywordSet( "--b git commit" )
+		actual = KeywordSet( ["-b","git","commit"] )
 		expected = TestKeywordSet( [], ["git","commit"], [], [], [])
 		self.assertEqual(actual,expected)
 
 	def test_that_it_yields_multiple_tag_keywords( self ):
-		actual = KeywordSet( "--t git commit" )
+		actual = KeywordSet( ["-t","git","commit"] )
 		expected = TestKeywordSet( [], [], ["git","commit"], [], [])
 		self.assertEqual(actual,expected)
 
 	def test_that_it_yields_multiple_wild_keywords( self ):
-		actual = KeywordSet( "--w git commit" )
+		actual = KeywordSet( ["-w","git","commit"] )
 		expected = TestKeywordSet( [], [], [], ["git","commit"], [])
 		self.assertEqual(actual,expected)
 
 	def test_that_it_yields_multiple_smart_keywords( self ):
-		actual = KeywordSet( "--s git commit" )
+		actual = KeywordSet( ["-s","git","commit"] )
 		expected = TestKeywordSet( [], [], [], [], ["git","commit"] )
 		self.assertEqual(actual,expected)
 
 	def test_that_it_yields_all_expected_keywords( self ):
-		actual = KeywordSet( "--n git commit --w hats --s pineapple,moose,mouse --t xcode --b blerv" )
+		actual = KeywordSet( "-n git commit -w hats -s pineapple moose mouse -t xcode -b blerv".split() )
 		expected = TestKeywordSet( ["git","commit"], ["blerv"], ["xcode"], ["hats"], ["pineapple","moose","mouse"])
 		self.assertEqual(actual,expected)
 
 	def test_that_it_yields_all_expected_keywords_variant( self ):
-		actual = KeywordSet( "--b blerv --w --s pineapple,moose,mouse --n git commit" )
+		actual = KeywordSet( "-b blerv -w -s pineapple moose mouse -n git commit".split() )
 		expected = TestKeywordSet( ["git","commit"], ["blerv"], [], [], ["pineapple","moose","mouse"])
 		self.assertEqual(actual,expected)
 
