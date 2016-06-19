@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import unittest
-from Workflows import Seeker, Workflow
+from Workflows import Seeker, Workflow, KeywordSet
 
 class SeekerTests( unittest.TestCase ):
  
@@ -36,7 +36,6 @@ class TestWorkflow(Workflow):
 		self.path = path
 
 class WorkflowTests( unittest.TestCase ):
-
 	def setup( self ):
 		pass
 
@@ -69,6 +68,55 @@ class WorkflowTests( unittest.TestCase ):
 
 		expected = TestWorkflow( "testpath.txt","Title","Some content\nMore content","workflow, cat, horse" )
 		self.assertEqual(actual, expected)
+
+
+class TestKeywordSet(KeywordSet):
+	def __init__( self,name,body,tags,wild,smart ):
+		self.name = name
+		self.body = body
+		self.tags = tags
+		self.wild = wild
+		self.smart = smart
+
+
+class KeywordSetTests( unittest.TestCase ):
+	def setup( self ):
+		pass
+
+	def test_that_it_yields_multiple_name_keywords( self ):
+		actual = KeywordSet( "--n git commit" )
+		expected = TestKeywordSet( ["git","commit"], [], [], [], [])
+		self.assertEqual(actual,expected)
+
+	def test_that_it_yields_multiple_body_keywords( self ):
+		actual = KeywordSet( "--b git commit" )
+		expected = TestKeywordSet( [], ["git","commit"], [], [], [])
+		self.assertEqual(actual,expected)
+
+	def test_that_it_yields_multiple_tag_keywords( self ):
+		actual = KeywordSet( "--t git commit" )
+		expected = TestKeywordSet( [], [], ["git","commit"], [], [])
+		self.assertEqual(actual,expected)
+
+	def test_that_it_yields_multiple_wild_keywords( self ):
+		actual = KeywordSet( "--w git commit" )
+		expected = TestKeywordSet( [], [], [], ["git","commit"], [])
+		self.assertEqual(actual,expected)
+
+	def test_that_it_yields_multiple_smart_keywords( self ):
+		actual = KeywordSet( "--s git commit" )
+		expected = TestKeywordSet( [], [], [], [], ["git","commit"] )
+		self.assertEqual(actual,expected)
+
+	def test_that_it_yields_all_expected_keywords( self ):
+		actual = KeywordSet( "--n git commit --w hats --s pineapple,moose,mouse --t xcode --b blerv" )
+		expected = TestKeywordSet( ["git","commit"], ["blerv"], ["xcode"], ["hats"], ["pineapple","moose","mouse"])
+		self.assertEqual(actual,expected)
+
+	def test_that_it_yields_all_expected_keywords_variant( self ):
+		actual = KeywordSet( "--b blerv --w --s pineapple,moose,mouse --n git commit" )
+		expected = TestKeywordSet( ["git","commit"], ["blerv"], [], [], ["pineapple","moose","mouse"])
+		self.assertEqual(actual,expected)
 
 if __name__ == '__main__':
     unittest.main()

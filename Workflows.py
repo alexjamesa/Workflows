@@ -9,16 +9,19 @@ from KeywordSet import KeywordSet
 workflow_dir = "TestWorkflows"
 
 def main():	
+	
 	# Find matching workflows
 	workflows = find_workflows()
-	keyword_set = KeywordSet( sys.argv[1:] )
+	keyword_set = KeywordSet( " ".join(sys.argv[1:]) )
 	matches = find_matches( workflows, keyword_set )
 
 	# Print menu for user
+	print('\n\nKEYWORDS:')
+	print(keyword_set)
 	selected_workflow = prompt_for_workflow( matches )
 
 	# Display chosen workflow
-	print('\n-------------------')
+	print('\n\n-------------------')
 	print( selected_workflow.as_string() )
 	print('-------------------\n\n')
 
@@ -36,7 +39,7 @@ def find_matches( workflows, keyword_set ):
 
 def prompt_for_workflow( workflows ):
 	workflow_count = len(workflows)
-	print('\nMENU:')
+	print('MENU:')
 	for i, workflow in enumerate(workflows):
 		print(workflow.as_menu_item( i+1 ))
 	selected_workflow_index = int(raw_input('-> Select workflow ({0}-{1}): '.format(1,workflow_count))) - 1
