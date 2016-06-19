@@ -1,5 +1,5 @@
 # Workflows
-A command line utility to quickly search and display text files in Terminal. *Workflows* can work with any .txt file, but it's specially made for those files with a title on the top line and list of tags on the bottom line—see below for an example. Written in Python 2.7 with unit and integration tests.
+A command line utility to quickly search and display text files in Terminal. *Workflows* works with any .txt files, but it's specially made for those files with a title on the top line and list of tags on the bottom line—see below for an example. Written in Python 2.7 with unit and integration tests.
 
 ### Example *Workflows* text file
 
@@ -22,7 +22,7 @@ To return a list of text files in *TestWorkflows* that have "git" in the name an
 		
 	python Workflows.py TestWorkflows -n git -t workflow
 
-Note: All directories within *TestWorkflows* will be searched in both cases.
+All directories within *TestWorkflows* will be searched in both cases. The names of all matching files will then be presented as a menu. Select a file to print it directly into your Terminal window. 👏🏼
 
 ### Options
 * -n: name keywords
@@ -36,4 +36,4 @@ Consider adding the following line to your `.bash_profile` file (Mac) for easy a
 
 	alias wf="python ~/'path to/Workflows.py' ~/'where you/keep your/Workflows'"
 
-Then using *Workflows* is as simple as this: `wf -n git commit`
+Then using *Workflows* can be as simple as this: `wf -n git commit`
