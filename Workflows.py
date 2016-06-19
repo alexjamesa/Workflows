@@ -20,7 +20,7 @@ def main():
 	# Display chosen workflow
 	print('\n-------------------')
 	print( selected_workflow.as_string() )
-	print('-------------------\n')
+	print('-------------------\n\n')
 
 def find_workflows():
 	file_strings = Seeker.file_strings(workflow_dir)
@@ -36,12 +36,12 @@ def find_matches( workflows, keyword_set ):
 
 def prompt_for_workflow( workflows ):
 	workflow_count = len(workflows)
-	print('')
+	print('\nMENU:')
 	for i, workflow in enumerate(workflows):
-		print(workflow.as_menu_item( i ))
-	selected_workflow_index = int(raw_input('\n > Select workflow ({0}-{1}): '.format(1,workflow_count))) - 1
+		print(workflow.as_menu_item( i+1 ))
+	selected_workflow_index = int(raw_input('-> Select workflow ({0}-{1}): '.format(1,workflow_count))) - 1
 	if selected_workflow_index < 0 or selected_workflow_index >= workflow_count:
-		print( '   > Sorry! Bad selection, must be between {0} and {1}'.format(1,workflow_count) )
+		print( '  > Sorry! Bad selection, must be between {0} and {1}'.format(1,workflow_count) )
 		sys.exit()
 	return workflows[selected_workflow_index]
 
