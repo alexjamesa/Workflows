@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import unittest
-from Workflows import Seeker, Workflow, KeywordSet
+from Workflows import Seeker, Workflow, KeywordSet, Analyzer
 
 class SeekerTests( unittest.TestCase ):
  
@@ -36,7 +36,7 @@ class TestWorkflow(Workflow):
 		self.path = path
 
 class WorkflowTests( unittest.TestCase ):
-	def setup( self ):
+	def setUp( self ):
 		pass
 
 	def test_that_it_returns_expected_menu_item( self ):
@@ -80,7 +80,7 @@ class TestKeywordSet(KeywordSet):
 
 
 class KeywordSetTests( unittest.TestCase ):
-	def setup( self ):
+	def setUp( self ):
 		pass
 
 	def test_that_it_yields_multiple_name_keywords( self ):
@@ -118,5 +118,71 @@ class KeywordSetTests( unittest.TestCase ):
 		expected = TestKeywordSet( ["git","commit"], ["blerv"], [], [], ["pineapple","moose","mouse"])
 		self.assertEqual(actual,expected)
 
+
+class AnalyzerTests( unittest.TestCase ):
+	def setUp( self ):
+		self.test_xcodetrouble = TestWorkflow( "testpath1.txt",\
+			"Troubleshooting Xcode",\
+			"1. Restart the app\n2. Cross your fingers",\
+			"xcode, troubleshoot, workflow, " )
+		self.test_xcodesetup = TestWorkflow( "testpath2.txt",\
+			"Setting up a project in Xcode",\
+			"1. Open Xcode\n2. Press New\n3. etc.",\
+			"workflow, xcode, new, project" )
+		self.test_itunesconnect = TestWorkflow( "testpath3.txt",\
+			"A new project in iTunes Connect",\
+			"1. Open your web browser\n2. Go to itunesconnect.?\n3. Start a project",\
+			"workflow, safari, itunes, connect" )
+		test_workflows = [self.test_xcodetrouble, self.test_xcodesetup, self.test_itunesconnect]
+		self.analyzer = Analyzer( test_workflows )
+
+	def test_that_it_returns_workflows_for_name_only_keywords( self ):
+		keyword_set = TestKeywordSet( ["troubleshoot"], [], [], [], [])
+		workflows = self.analyzer.workflows_for_keywords( keyword_set )
+		self.assertEqual(len(workflows),1)
+		self.assertEqual(workflows,[self.test_xcodetrouble])
+
+	def test_that_it_returns_workflows_for_body_only_keywords( self ):
+		keyword_set = TestKeywordSet( [], ["xcode"], [], [], [])
+		workflows = self.analyzer.workflows_for_keywords( keyword_set )
+		self.assertEqual(len(workflows),1)
+		self.assertEqual(workflows,[self.test_xcodesetup])
+
+	def test_that_it_returns_workflows_for_tags_only_keywords( self ):
+		keyword_set = TestKeywordSet( [], [], ["xcode"], [], [])
+		workflows = self.analyzer.workflows_for_keywords( keyword_set )
+		self.assertEqual(len(workflows),2)
+		self.assertEqual(workflows,[self.test_xcodesetup,self.test_xcodetrouble])
+
+	def test_that_it_returns_workflows_for_wild_only_keywords( self ):
+		keyword_set = TestKeywordSet( [], [], [], ["xcode","project"], [])
+		workflows = self.analyzer.workflows_for_keywords( keyword_set )
+		self.assertEqual(len(workflows),1)
+		self.assertEqual(workflows,[self.test_xcodesetup])
+
+	def test_that_it_returns_workflows_for_smart_only_keywords( self ):
+		keyword_set = TestKeywordSet( [], [], [], [], ["project"])
+		workflows = self.analyzer.workflows_for_keywords( keyword_set )
+		self.assertEqual(len(workflows),2)
+		self.assertEqual(workflows,[self.test_xcodesetup, self.test_itunesconnect])
+
+	def test_that_it_returns_workflows_for_mixed_keywords( self ):
+		keyword_set = TestKeywordSet( ["xcode"], [], ["project","workflow"], [], [])
+		workflows = self.analyzer.workflows_for_keywords( keyword_set )
+		self.assertEqual(len(workflows),1)
+		self.assertEqual(workflows,[self.test_xcodesetup])
+
+	def test_that_it_returns_workflows_for_mixed_keywords_variant( self ):
+		keyword_set = TestKeywordSet( ["project"], ["1."], [], ["open"], ["project"])
+		workflows = self.analyzer.workflows_for_keywords( keyword_set )
+		self.assertEqual(len(workflows),2)
+		self.assertEqual(workflows,[self.test_xcodesetup, self.test_itunesconnect])
+
+	# NT: Integration tests, error cases for inputs (like if no options, or just options)
+
 if __name__ == '__main__':
     unittest.main()
+
+
+# FUTURE FEATURES:
+#  - Make sure tied matches are sorted by name (e.g., sort by name first, then score)
