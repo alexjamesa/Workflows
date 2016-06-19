@@ -14,15 +14,15 @@ A command line utility to quickly search and display text files in Terminal. *Wo
 	Tags: workflow, steps, how-to, meta
 
 ### Example usage
-To return a list of text files in *SearchDirectory* that have "git" and "commit" in the name (i.e., the top line of the file):
+To return a list of text files in *TestWorkflows* that have "git" and "commit" in the name (i.e., the top line of the file):
 		
-	python Workflows SearchDirectory -n git commit 
+	python Workflows.py TestWorkflows -n git commit 
 	
-To return a list of text files in SearchDirectory that have "git" in the name and a "workflow" tag:
+To return a list of text files in *TestWorkflows* that have "git" in the name and a "workflow" tag:
 		
-	python Workflows SearchDirectory -n git -t workflow
+	python Workflows.py TestWorkflows -n git -t workflow
 
-Note: All directories within SearchDirectory will be searched in both cases.
+Note: All directories within *TestWorkflows* will be searched in both cases.
 
 ### Options
 * -n: name keywords
